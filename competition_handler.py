@@ -1,7 +1,7 @@
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from telegram import Update
-from telegram.ext import ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Global variables
 participants = set()  # Set of participants who joined the competition
@@ -16,7 +16,7 @@ current_question = None  # Current question being asked
 answers = {}  # Store user answers
 
 # Function: Participants join the competition
-async def join_competition(update: Update, context: ContextTypes.DEFAULT):
+async def join_competition(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     if user.id not in participants:
         participants.add(user.id)
@@ -25,7 +25,7 @@ async def join_competition(update: Update, context: ContextTypes.DEFAULT):
         await update.message.reply_text("You have already joined the competition.")
 
 # Function: Handle answers from participants
-async def handle_answer(update: Update, context: ContextTypes.DEFAULT):
+async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global current_question
 
     user = update.effective_user
@@ -46,7 +46,7 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT):
     await update.message.reply_text("Answer received!")
 
 # Function: Start the competition
-async def start_competition(context: ContextTypes.DEFAULT):
+async def start_competition(context: ContextTypes.DEFAULT_TYPE):
     global remaining_participants, current_question
 
     if len(participants) < 5:
