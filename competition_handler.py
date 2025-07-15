@@ -1,4 +1,5 @@
 import asyncio
+import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
@@ -99,6 +100,9 @@ def start_competition(context: CallbackContext):
 # Schedule the competition
 def schedule_competition(dispatcher, chat_id, hour, minute):
     scheduler = BackgroundScheduler()
+    # Use pytz to specify the timezone (e.g., UTC)
+    timezone = pytz.timezone("UTC")  # Change "UTC" to your desired timezone if needed
+
     scheduler.add_job(
         start_competition,
         'cron',
@@ -106,5 +110,6 @@ def schedule_competition(dispatcher, chat_id, hour, minute):
         minute=minute,
         args=[dispatcher.bot],
         kwargs={'context': chat_id},
+        timezone=timezone,  # Add the pytz timezone here
     )
     scheduler.start()
