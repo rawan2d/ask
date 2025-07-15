@@ -34,7 +34,7 @@ def main():
     dispatcher.add_handler(CommandHandler("join", join_competition))
     dispatcher.add_handler(CommandHandler("answer", handle_answer))
 
-    # Schedule the competition (starts at 10 PM server time)
+    # Schedule the competition (starts at 10 PM UTC)
     chat_id = -1  # Replace with your specific chat ID
     schedule_competition(dispatcher, chat_id, hour=22, minute=0)
 
