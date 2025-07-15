@@ -2,6 +2,7 @@ import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from dotenv import load_dotenv
+from competition_handler import join_competition, handle_answer, schedule_competition
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,7 +15,7 @@ if not BOT_TOKEN:
 
 # Define a simple command (e.g., /start)
 def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Hello! I am your bot. How can I help you?')
+    update.message.reply_text('Hello! I am your bot. Use /join to join a competition or /answer <your_answer> to respond to a question!')
 
 # Handle text messages
 def echo(update: Update, context: CallbackContext) -> None:
@@ -28,6 +29,14 @@ def main():
     # Register command and message handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+    # Register competition handlers
+    dispatcher.add_handler(CommandHandler("join", join_competition))
+    dispatcher.add_handler(CommandHandler("answer", handle_answer))
+
+    # Schedule the competition (starts at 10 PM server time)
+    chat_id = -1  # Replace with your specific chat ID
+    schedule_competition(updater.bot, chat_id, hour=22, minute=0)
 
     # Start the bot
     updater.start_polling()
