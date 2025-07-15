@@ -34,9 +34,11 @@ def main():
     dispatcher.add_handler(CommandHandler("join", join_competition))
     dispatcher.add_handler(CommandHandler("answer", handle_answer))
 
-    # Schedule the competition (starts at 10 PM UTC)
-    chat_id = -1  # Replace with your specific chat ID
-    schedule_competition(dispatcher, chat_id, hour=22, minute=0)
+    # Schedule the competition (starts 1 minute from now for testing)
+    from datetime import datetime, timedelta
+    current_time = datetime.now()
+    test_time = current_time + timedelta(minutes=1)  # Starts in 1 minute
+    schedule_competition(dispatcher, chat_id=-1, hour=test_time.hour, minute=test_time.minute)
 
     # Start the bot
     updater.start_polling()
