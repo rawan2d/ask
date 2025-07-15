@@ -36,7 +36,7 @@ def main():
 
     # Schedule the competition (starts at 10 PM server time)
     chat_id = -1  # Replace with your specific chat ID
-    schedule_competition(updater.bot, chat_id, hour=22, minute=0)
+    schedule_competition(dispatcher, chat_id, hour=22, minute=0)
 
     # Start the bot
     updater.start_polling()
