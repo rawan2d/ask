@@ -2,7 +2,7 @@ import asyncio
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from telegram import Update
-from telegram.ext import CommandHandler, CallbackContext
+from telegram.ext import CallbackContext
 
 # Global variables
 participants = set()  # Set of participants who joined the competition
@@ -47,19 +47,19 @@ def handle_answer(update: Update, context: CallbackContext):
     update.message.reply_text("Answer received!")
 
 # Function: Start the competition
-def start_competition(context: CallbackContext):
+def start_competition(bot, chat_id):
     global remaining_participants, current_question
 
     if len(participants) < 5:
-        context.bot.send_message(
-            chat_id=context.job.context,
+        bot.send_message(
+            chat_id=chat_id,
             text="Not enough participants to start the competition. At least 5 players are required."
         )
         return
 
     remaining_participants = list(participants)
-    context.bot.send_message(
-        chat_id=context.job.context,
+    bot.send_message(
+        chat_id=chat_id,
         text="The competition has started! 🎉"
     )
 
@@ -67,8 +67,8 @@ def start_competition(context: CallbackContext):
         current_question = question_set
         answers.clear()  # Clear answers for each round
 
-        context.bot.send_message(
-            chat_id=context.job.context,
+        bot.send_message(
+            chat_id=chat_id,
             text=f"Question: {question_set['question']}"
         )
 
@@ -84,15 +84,15 @@ def start_competition(context: CallbackContext):
         if len(remaining_participants) <= 5:
             break
 
-        context.bot.send_message(
-            chat_id=context.job.context,
+        bot.send_message(
+            chat_id=chat_id,
             text=f"Remaining participants: {len(remaining_participants)}"
         )
 
     # Announce winners
-    winners = [f"<b>{context.bot.get_chat(user_id).first_name}</b>" for user_id in remaining_participants]
-    context.bot.send_message(
-        chat_id=context.job.context,
+    winners = [f"<b>{bot.get_chat(user_id).first_name}</b>" for user_id in remaining_participants]
+    bot.send_message(
+        chat_id=chat_id,
         text=f"The competition is over! 🎉\nWinners: {', '.join(winners)}",
         parse_mode="HTML"
     )
@@ -108,8 +108,7 @@ def schedule_competition(dispatcher, chat_id, hour, minute):
         'cron',
         hour=hour,
         minute=minute,
-        args=[dispatcher.bot],
-        kwargs={'context': chat_id},
+        args=[dispatcher.bot, chat_id],  # Pass bot and chat_id as args
         timezone=timezone,  # Add the pytz timezone here
     )
     scheduler.start()
